@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+	<div id="main" style="width: 100%;height:650px;"></div>
+	 <script type="text/javascript">
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        var XR;
+        var YR;
+		$.ajax({
+		    url:'{:url('index/getWheatData')}',
+		    async:false,    //或false,是否异步
+		    dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+		    success:function(data){
+		        console.log('success!')
+		        XR = data.XR
+		        YR = data.YR
+		    },
+		    error:function(xhr,textStatus){
+		        console.log('错误')
+		        console.log(xhr)
+		        console.log(textStatus)
+		    },
+		})
+
+        // 指定图表的配置项和数据
+		var option = {
+			title: {
+				text :'小麦价格图'
+			},
+			tooltip: {
+		        axisPointer: {
+		        	type: true
+
+		        }
+			},
+		    toolbox: {
+		        show : true,
+		        feature : {
+		            // mark : {show: true},
+		            // dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line', 'bar']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        },
+
+		    },
+		    // markPoint : {
+      //           data : [
+      //               {type : 'max', name: '最大值'},
+      //               {type : 'min', name: '最小值'}
+      //           ]
+      //       },
+      		dataZoom:[
+	      		{
+		            id: 'dataZoomY',
+		            type: 'slider',
+		            yAxisIndex: [0],
+		            filterMode: 'empty'
+	        	},
+	        	{
+		            id: 'dataZoomX',
+		            type: 'slider',
+		            xAxisIndex: [0],
+		            filterMode: 'filter',
+		            top : "bottom"
+		        },
+      		],
+		    xAxis: {
+		    	name: '日期',
+		        type: 'category',
+		        data: XR,
+		        boundaryGap: true,
+		        axisLabel: {
+		        	interval: 0,
+		        	rotate: -60
+		        },
+		        axisPointer: {
+		        	type: 'line',
+		        	lineStyle: {
+		        		color: {
+						    type: 'linear',
+						    x: 0,
+						    y: 0,
+						    x2: 0,
+						    y2: 1,
+						    colorStops: [{
+						        offset: 0, color: 'red' // 0% 处的颜色
+						    }, {
+						        offset: 1, color: 'blue' // 100% 处的颜色
+						    }],
+						    globalCoord: false // 缺省为 false
+						}
+		        	}
+		        }
+		        	 
+		    },
+		    yAxis: {
+		    	name: '价格(美元)',
+		        type: 'value'
+		    },
+		    series: [{
+		        data: YR,
+		        type: 'line',
+		        itemStyle : { normal: {label : {show: true}}},
+		        showAllSymbol: true,
+		        symbolSize : 7
+		    }]
+		};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
