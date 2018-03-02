@@ -1,47 +1,39 @@
 <!DOCTYPE html>
-<html lang="zh-cmn-Hans">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
-	  <link rel="stylesheet" href="/static/layui/css/layui.css">
-	  <link rel="stylesheet" href="/static/layui/css/index.css">
-	  <script src="/static/layui/layui.js"></script>
-	  <script src="/static/js/echarts.min.js"></script>
-      <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-	<div class="main">	
-		<ul class="layui-nav" lay-filter="test">
-		<!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
-		  <li class="layui-nav-item">
-		    <a href="javascript:;">图表选择</a>
-		    <dl class="layui-nav-child">
-		      <dd><a id="wheat" onclick="changeView(this)" href="javascript:;">小麦价格图</a></dd>
-		      <dd><a id="wheat_shock" onclick="changeView(this)" href="javascript:;">小麦价格振荡图</a></dd>
-		    </dl>
-		  </li>
-<!-- 		  <li class="layui-nav-item">
-		    <a href="javascript:;">other</a>
-		    <dl class="layui-nav-child">
-		      <dd><a href="">name1</a></dd>
-		      <dd><a href="">name2</a></dd>
-		      <dd><a href="">name3</a></dd>
-		    </dl>
-		  </li> -->
-		  <!-- <li class="layui-nav-item"><a href="">说明</a></li> -->
-		</ul>
-			<div id="main" style="width: 100%;height:650px;"></div>
+	<div id="main" style="width: 100%;height:650px;"></div>
 	 <script type="text/javascript">
 
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
         var XR;
         var YR;
+		$.ajax({
+		    url:'{:url('index/getWheatData')}',
+		    async:false,    //或false,是否异步
+		    dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+		    success:function(data){
+		        console.log('success!')
+		        XR = data.XR
+		        YR = data.YR
+		    },
+		    error:function(xhr,textStatus){
+		        console.log('错误')
+		        console.log(xhr)
+		        console.log(textStatus)
+		    },
+		})
 
         // 指定图表的配置项和数据
 		var option = {
 			title: {
-				text :'请选择图表'
+				text :'小麦价格图'
 			},
 			tooltip: {
 		        axisPointer: {
@@ -123,43 +115,8 @@
 		    }]
 		};
 
-        function changeView(e){
-        	var title = $(e).text()
-	        $.ajax({
-	        	type: 'POST',
-			    url:'{:url('index/getWheatData')}',
-			    async:false,    //或false,是否异步
-			    data: {name:$(e).attr("id")},
-			    dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text
-			    success:function(data){
-			        console.log('success!')
-			        option.xAxis.data = data.XR
-			        option.series[0].data = data.YR
-			        option.title.text = title
-			        myChart.setOption(option, true);
-			    },
-			    error:function(xhr,textStatus){
-			        console.log('fail')
-			        console.log(xhr)
-			        console.log(textStatus)
-			    },
-			})
-
-        }
-
-
         // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option, true);
+        myChart.setOption(option);
     </script>
-
-
-<script>
-layui.use('element', function(){
-  var element = layui.element;
-  
-  //…
-});
-</script>
-	</div>
 </body>
 </html>

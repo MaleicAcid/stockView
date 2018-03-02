@@ -236,4 +236,11 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+    //table_name
+    'table_name' => [
+        '' => 'wheat',
+        'wheat' => 'wheat',
+        'wheat_shock' => 'wheat_shock',
+    ],
 ];
